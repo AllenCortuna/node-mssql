@@ -44,17 +44,14 @@ app.get('/', (req, res) => {
 app.get("/email", async (req, res) => {
     console.log("try to get email");
     try {
-      const pool = await sql.connect(config);
-      const result = await pool.request().query("SELECT * FROM email");
-      res.json(result.recordset);
-      result.then((res1) => {
-        returnres.json(res1);
-      });
+        const pool = await sql.connect(config);
+        const result = await pool.request().query("SELECT * FROM email");
+        res.json(result.recordset);  // Send response only once
     } catch (err) {
-      console.error("Error:", err);
-      res.status(500).json({ error: "Failed to fetch data" });
+        console.error("Error:", err);
+        res.status(500).json({ error: "Failed to fetch data" });
     }
-  });
+});
 
 
 app.post("/post-email", async (req, res) => {
@@ -62,7 +59,7 @@ app.post("/post-email", async (req, res) => {
     console.log("try to post email"); 
     try {
         const pool = await sql.connect(config);
-        const result = await pool
+        await pool
             .request()
             .input("email", sql.VarChar, email)
             .input("name", sql.VarChar, name)
